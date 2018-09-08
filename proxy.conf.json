@@ -1,0 +1,11 @@
+{
+    "/api": {
+    "target": "http://api.musixmatch.com",
+    "secure": false,
+    "pathRewrite": {
+    "^/api": ""
+    },
+    "changeOrigin": true
+    }
+    }
+    

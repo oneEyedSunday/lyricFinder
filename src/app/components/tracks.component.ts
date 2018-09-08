@@ -1,17 +1,19 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input } from '@angular/core';
+
 
 @Component({
   selector: 'app-tracks',
   template: `
-    <p>
-      tracks works!
-    </p>
+    <div class="row">
+      <app-track *ngFor="let track of tracks.tracklist" [track]="track"></app-track>
+    </div>
   `,
-  styles: []
+  styles: [],
 })
 export class TracksComponent implements OnInit {
-
-  constructor() { }
+  @Input() tracks;
+  constructor() {
+  }
 
   ngOnInit() {
   }
