@@ -27,11 +27,25 @@ export class TracksStore extends Store<TrackState> {
     const filtered: trackType[] = [];
     const deep = JSON.parse(JSON.stringify(data));
     deep.map(({track}) => {
+      const {
+        track_name, album_name, artist_name, track_id
+      } = track;
       filtered.push( {
-        track_name: track.track_name, album_name: track.album_name, artist_name: track.artist_name
+        track_name, album_name, artist_name, track_id
       });
     });
     return filtered;
+  }
+
+  getTrackById(trackId: string): trackType {
+    let currTrack: trackType;
+    this.state.tracklist.map(track => {
+      if (track.track_id.toString() === trackId) {
+        currTrack = track;
+      }
+    });
+
+    return currTrack;
   }
 }
 
@@ -42,6 +56,7 @@ interface trackType {
   track_name: string;
   album_name: string;
   artist_name: string;
+  track_id: string;
 }
 
 // tslint:disable-next-line:class-name

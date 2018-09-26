@@ -1,7 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
 import {HttpClientModule} from '@angular/common/http';
-import { NgxSpinnerModule } from 'ngx-spinner';
 
 import { AppComponent } from './app.component';
 import components from './components';
@@ -12,6 +11,7 @@ import { HomeComponent } from './containers/home.component';
 import { TracksComponent } from './components/tracks.component';
 import { LoadingComponent } from './components/loading.component';
 import { TrackComponent } from './components/track.component';
+import { LyricsComponent } from './components/lyrics.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -21,12 +21,12 @@ import { TrackComponent } from './components/track.component';
     TracksComponent,
     LoadingComponent,
     TrackComponent,
+    LyricsComponent,
   ],
   imports: [
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
-    NgxSpinnerModule
   ],
   providers: [...services],
   bootstrap: [AppComponent]

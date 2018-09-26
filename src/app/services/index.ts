@@ -1,13 +1,16 @@
-import { uiStore as ui } from '../services/ui.service';
-import { TracksStore as tracks } from '../services/tracks.service';
+import { uiStore as ui } from './ui.service';
+import { TracksStore as tracks } from './tracks.service';
+import { lyricStore as lyrics } from './lyric.service';
 
 
 export const services = [
     ui,
-    tracks
+    tracks,
+    lyrics
 ];
 
-export * from '../services/tracks.service';
-export * from '../services/ui.service';
+export * from './tracks.service';
+export * from './ui.service';
+export * from './lyric.service'
 
 export default services;
