@@ -1,6 +1,8 @@
 import { BrowserModule } from '@angular/platform-browser';
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
 import {HttpClientModule} from '@angular/common/http';
+import {MomentModule} from 'ngx-moment';
 
 import { AppComponent } from './app.component';
 import components from './components';
@@ -27,6 +29,8 @@ import { LyricsComponent } from './components/lyrics.component';
     BrowserModule,
     HttpClientModule,
     AppRoutingModule,
+    MomentModule,
+    ReactiveFormsModule
   ],
   providers: [...services],
   bootstrap: [AppComponent]

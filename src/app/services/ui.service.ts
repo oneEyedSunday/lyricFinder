@@ -17,6 +17,13 @@ export class uiStore extends Store<uiState> {
       loading: !this.state.loading
     });
   }
+
+  setHeading(heading: string) {
+    this.setState({
+      ...this.state,
+      heading
+    });
+  }
 }
 
 

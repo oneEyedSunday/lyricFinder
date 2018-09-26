@@ -6,8 +6,9 @@ import { skip } from 'rxjs/operators';
 @Component({
   selector: 'app-home',
   template: `
-    <h3 class="text-center mb-4">{{heading}}</h3>
     <app-loading *ngIf="loading"></app-loading>
+    <app-search></app-search>
+    <h3 class="text-center mb-4">{{heading}}</h3>
     <app-tracks [tracks]="tracks" *ngIf="!loading && tracks"></app-tracks>
   `,
   styles: []

@@ -28,10 +28,12 @@ export class TracksStore extends Store<TrackState> {
     const deep = JSON.parse(JSON.stringify(data));
     deep.map(({track}) => {
       const {
-        track_name, album_name, artist_name, track_id
+        track_name, album_name, artist_name, track_id, primary_genres, explicit,
+        first_release_date, album_id
       } = track;
       filtered.push( {
-        track_name, album_name, artist_name, track_id
+        track_name, album_name, artist_name, track_id, primary_genres, explicit,
+        first_release_date, album_id
       });
     });
     return filtered;
@@ -47,9 +49,18 @@ export class TracksStore extends Store<TrackState> {
 
     return currTrack;
   }
+
+  findTrack(query: string) {
+    this.http.get(
+      `/api/ws/1.1/track.search?q_track=${query}&page_size=5&page=1&s_track_rating=desc&apikey=df8bb52b21472814f3ae35139ba4e50e`)
+      .subscribe(json => {
+        // console.log(json.message.body.track_list);
+        this.setState({
+          tracklist : this.beatDown(json['message'].body.track_list)
+        });
+      });
+  }
 }
-
-
 
 // tslint:disable-next-line:class-name
 interface trackType {
@@ -57,6 +68,10 @@ interface trackType {
   album_name: string;
   artist_name: string;
   track_id: string;
+  album_id: string;
+  primary_genres: any;
+  explicit: string;
+  first_release_date: string;
 }
 
 // tslint:disable-next-line:class-name
@@ -67,41 +82,7 @@ interface tracknameType {
 
 class TrackState {
  tracklist: trackType[] = [
-  // {
-  //   track: {track_name: 'abc', album_name: 'Album name', artist_name: 'Artist Name'}
-  // }
  ];
 }
 
 
-/* 
-// methods
-  updateTestProperty (): void {
-      this.setState({
-          ...this.state,
-          testProperty: 'updated value',
-      });
-  }
-}
-
-*/
-
-/*
-//use in component
-class TestComponent {
-  store: TestStore;
-
-  constructor () {
-      this.store = new TestStore();
-
-      this.store.state$.subscribe(state => {
-          console.log(state);
-      });
-
-      setTimeout(() => {
-          this.store.updateTestProperty();
-      }, 3000);
-  }
-}
-
-*/
