@@ -1,5 +1,5 @@
 {
-    "/api": {
+  "/api": {
     "target": "http://api.musixmatch.com",
     "secure": false,
     "pathRewrite": {
@@ -7,5 +7,4 @@
     },
     "changeOrigin": true
     }
-    }
-    
+}

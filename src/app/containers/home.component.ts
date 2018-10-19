@@ -27,23 +27,30 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     this.loading = true;
-    this.tracksStore.fetchTracks();
-    this.tracksStore.state$.pipe(
-      skip(1),
-    )
-    .subscribe(data => {
-      console.log(data);
-      this.tracks = data;
-    //  if (this.tracks.tracklist.length > 0) { this.loading = false; } // hack for initial value
-    this.loading = false;
-     console.log(this.loading);
-    },
-  err => {
-    console.error(err);
-    this.loading = false;
-    this.error = true;
-  });
-
+    this.tracksStore.state$.subscribe(data => {
+      console.log('tracksStore$', data);
+      if (data.tracklist && data.tracklist.length > 0) {
+        this.tracks = data;
+        console.log('using cached data')
+        this.loading = false;
+      } else {
+        console.log('making API call')
+        this.tracksStore.fetchTracks();
+        this.tracksStore.state$.pipe(
+          skip(1),
+        )
+        .subscribe(data => {
+          console.log(data);
+          this.tracks = data;
+          this.loading = false;
+        },
+      err => {
+        console.error(err);
+        this.loading = false;
+        this.error = true;
+      });
+      }
+    });
     this.uiStore.state$.subscribe(data => {
       this.heading = data.heading;
     });

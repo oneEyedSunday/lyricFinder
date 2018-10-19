@@ -11,15 +11,25 @@ export class TracksStore extends Store<TrackState> {
     super(new TrackState());
   }
 
+  getTracksFromStoreOrAPI() {
+    if (this.state.tracklist && this.state.tracklist.length ) {
+      return;
+    } else {
+      this.fetchTracks();
+    }
+  }
+
   // TODO: add env file and config
   fetchTracks() {
     // tslint:disable-next-line:max-line-length
     this.http.get(`/api/ws/1.1/chart.tracks.get?page=1&page_size=10&country=jp&f_has_lyrics=1&apikey=df8bb52b21472814f3ae35139ba4e50e`).subscribe(
       json => {
-        // console.log(json.message.body.track_list);
+        console.log(json['message'].body.track_list);
         this.setState({
           tracklist : this.beatDown(json['message'].body.track_list)
         });
+      }, err => {
+        console.error(err)
       });
   }
 
