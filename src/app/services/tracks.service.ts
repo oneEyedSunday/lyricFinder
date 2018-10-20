@@ -1,35 +1,53 @@
 import { Injectable } from '@angular/core';
 import {Store} from 'rxjs-observable-store';
-import { HttpClient } from '@angular/common/http';
+import { skip, finalize, take } from 'rxjs/operators';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import {uiStore} from './ui.service';
+import ENV from './../../../env';
+import { Observable } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TracksStore extends Store<TrackState> {
-
-  constructor(private http: HttpClient) {
+  uiState: uiStore;
+  constructor(private http: HttpClient, _uiState: uiStore) {
     super(new TrackState());
+    this.uiState = _uiState;
+    // TODO (oneeyedsunday)
+    // make search params customizable
   }
 
-  getTracksFromStoreOrAPI() {
-    if (this.state.tracklist && this.state.tracklist.length ) {
-      return;
+  // TODO (oneeyedsunday)
+  // follow observable pattern
+  getTracksFromStoreOrAPI(): Observable<any> | any {
+    if (this.state.tracklist.length > 0 ) {
+      console.log('using data from store');
     } else {
       this.fetchTracks();
+      console.log('making API call');
+        return this.state$.pipe(
+          skip(1)
+        );
     }
   }
 
   // TODO: add env file and config
   fetchTracks() {
+    this.uiState.loading();
     // tslint:disable-next-line:max-line-length
-    this.http.get(`/api/ws/1.1/chart.tracks.get?page=1&page_size=10&country=jp&f_has_lyrics=1&apikey=df8bb52b21472814f3ae35139ba4e50e`).subscribe(
+    this.http.get(`/api/ws/1.1/chart.tracks.get?page=1&page_size=10&country=jp&f_has_lyrics=1&apikey=${ENV.apiKey}`).pipe(
+      finalize(() => { this.uiState.notloading(); }),
+      take(1)
+    ).subscribe(
       json => {
-        console.log(json['message'].body.track_list);
+        // console.log(json['message'].body.track_list);
         this.setState({
+          ...this.state,
           tracklist : this.beatDown(json['message'].body.track_list)
         });
-      }, err => {
-        console.error(err)
+      }, (err: HttpErrorResponse) => {
+        this.uiState.setError(err.error);
       });
   }
 
@@ -61,13 +79,20 @@ export class TracksStore extends Store<TrackState> {
   }
 
   findTrack(query: string) {
+    this.uiState.loading();
     this.http.get(
-      `/api/ws/1.1/track.search?q_track=${query}&page_size=5&page=1&s_track_rating=desc&apikey=df8bb52b21472814f3ae35139ba4e50e`)
+      `/api/ws/1.1/track.search?q_track=${query}&page_size=5&page=1&s_track_rating=desc&apikey=${ENV.apiKey}`).pipe(
+        finalize(() => { this.uiState.notloading(); }),
+        take(1)
+      )
       .subscribe(json => {
         // console.log(json.message.body.track_list);
         this.setState({
-          tracklist : this.beatDown(json['message'].body.track_list)
+          ...this.state,
+          foundTracks : this.beatDown(json['message'].body.track_list)
         });
+      }, (err: HttpErrorResponse) => {
+        this.uiState.setError(err.error);
       });
   }
 }
@@ -93,6 +118,5 @@ interface tracknameType {
 class TrackState {
  tracklist: trackType[] = [
  ];
+ foundTracks: trackType[] = [];
 }
-
-

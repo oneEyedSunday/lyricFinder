@@ -27,7 +27,6 @@ export class SearchComponent implements OnInit {
     searchForm: FormGroup;
     constructor(private formBuilder: FormBuilder, private tracksService: TracksService,
         private _ui: uiService) {
-       
        this.trackTitle = new FormControl('');
     //    this.trackTitle.valueChanges.subscribe(changes => {console.log(changes);});
     }

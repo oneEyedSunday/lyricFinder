@@ -9,7 +9,7 @@ import { lyricStore, TracksStore } from './../services';
     <a routerLink="/" class="btn btn-dark btn-sm mb-4"><< Go Back</a>
     <app-loading *ngIf="loading"></app-loading>
     <div class="card">
-      <h5 class="card-header">{{track.track_name}} by 
+      <h5 class="card-header">{{track.track_name}} by &nbsp;
       <span class="text-secondary">{{track.artist_name}}</span></h5>
       <div class="card-body">
       <p class="card-text">{{(localStore.state$ | async).lyrics}}</p>
@@ -39,13 +39,18 @@ export class LyricsComponent implements OnInit, OnDestroy {
   routeSub: Subscription;
   localStore: lyricStore;
   trackStore: TracksStore;
+  route: ActivatedRoute;
   loading: boolean;
   error: boolean;
   track;
-  constructor(private route: ActivatedRoute, private _lyricStore: lyricStore, private _trackStore: TracksStore) {
+  constructor(private _route: ActivatedRoute, private _lyricStore: lyricStore, private _trackStore: TracksStore) {
     this.trackStore = _trackStore;
     this.localStore = _lyricStore;
-    this.routeSub = route.params.subscribe(params => {
+    this.route = _route;
+  }
+
+  ngOnInit() {
+    this.routeSub = this.route.params.subscribe(params => {
       this.id = params['id'];
       this.localStore.fetchLyrics(this.id);
     });
@@ -54,13 +59,6 @@ export class LyricsComponent implements OnInit, OnDestroy {
       this.track = this.trackStore.getTrackById(this.id);
       console.log(this.track);
     });
-
-
-
-    // this.localStore.state$
-  }
-
-  ngOnInit() {
   }
 
   ngOnDestroy() {

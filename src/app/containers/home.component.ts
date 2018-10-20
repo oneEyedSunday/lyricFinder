@@ -1,59 +1,38 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { uiStore } from '../services/ui.service';
 import { TracksStore } from '../services';
-import { skip } from 'rxjs/operators';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-home',
   template: `
-    <app-loading *ngIf="loading"></app-loading>
+    <app-loading *ngIf=" (uiStore.state$ | async).loading "></app-loading>
     <app-search></app-search>
-    <h3 class="text-center mb-4">{{heading}}</h3>
-    <app-tracks [tracks]="tracks" *ngIf="!loading && tracks"></app-tracks>
+    <h3 class="text-center mb-4">{{ (uiStore.state$ | async ).heading}}</h3>
+    <app-tracks [tracks]="tracks" *ngIf=" (!(uiStore.state$ | async)).error && tracks"></app-tracks>
+    <p class="lead alert alert-danger">{{ ( uiStore.state$ | async).error }} </p>
   `,
   styles: []
 })
-export class HomeComponent implements OnInit {
-  heading = 'Not Set';
+export class HomeComponent implements OnInit, OnDestroy {
   uiStore: uiStore;
   tracksStore: TracksStore;
-  tracks;
-  loading: boolean;
-  error: boolean;
+  tracks = undefined;
+  trackstore$: Subscription;
+  uiStore$: Subscription;
   constructor(uStore: uiStore, tracksStore: TracksStore) {
     this.uiStore = uStore;
     this.tracksStore = tracksStore;
   }
 
   ngOnInit() {
-    this.loading = true;
-    this.tracksStore.state$.subscribe(data => {
-      console.log('tracksStore$', data);
-      if (data.tracklist && data.tracklist.length > 0) {
-        this.tracks = data;
-        console.log('using cached data')
-        this.loading = false;
-      } else {
-        console.log('making API call')
-        this.tracksStore.fetchTracks();
-        this.tracksStore.state$.pipe(
-          skip(1),
-        )
-        .subscribe(data => {
-          console.log(data);
-          this.tracks = data;
-          this.loading = false;
-        },
-      err => {
-        console.error(err);
-        this.loading = false;
-        this.error = true;
-      });
-      }
-    });
-    this.uiStore.state$.subscribe(data => {
-      this.heading = data.heading;
+    this.tracksStore.getTracksFromStoreOrAPI();
+    this.trackstore$ = this.tracksStore.state$.subscribe(data => {
+      this.tracks = data;
     });
   }
 
+  ngOnDestroy() {
+    this.trackstore$.unsubscribe();
+  }
 }

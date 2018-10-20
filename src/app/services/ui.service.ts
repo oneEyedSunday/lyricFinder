@@ -13,9 +13,32 @@ export class uiStore extends Store<uiState> {
 
   toggleLoading() {
     this.setState({
-      heading: this.state.heading,
+      ...this.state,
       loading: !this.state.loading
     });
+  }
+
+  setError(err) {
+    this.setState({
+      ...this.state,
+      error: err
+    });
+  }
+
+  loading() {
+    this.setState({
+      ...this.state,
+      loading: true
+    });
+    console.log('loading called');
+  }
+
+  notloading() {
+    this.setState({
+      ...this.state,
+      loading: false
+    });
+    console.log('not loading called');
   }
 
   setHeading(heading: string) {
@@ -26,10 +49,9 @@ export class uiStore extends Store<uiState> {
   }
 }
 
-
-
 // tslint:disable-next-line:class-name
 class uiState {
-  heading = 'Top 10 Tracks';
+  heading = 'Lyric Finder App - Powered by MusixMatch';
   loading = true;
+  error = undefined;
 }

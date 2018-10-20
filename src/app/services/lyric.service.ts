@@ -1,6 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Store} from 'rxjs-observable-store';
 import { HttpClient } from '@angular/common/http';
+import ENV from './../../../env';
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class lyricStore extends Store<lyricState> {
 
   fetchLyrics(lyricId: string) {
     // tslint:disable-next-line:max-line-length
-    this.http.get(`/api/ws/1.1/track.lyrics.get?track_id=${lyricId}&apikey=df8bb52b21472814f3ae35139ba4e50e`).subscribe(
+    this.http.get(`/api/ws/1.1/track.lyrics.get?track_id=${lyricId}&apikey=${ENV.apiKey}`).subscribe(
       json => {
         console.log(json);
         this.setState({
@@ -24,9 +25,7 @@ export class lyricStore extends Store<lyricState> {
   }
 }
 
-
-
 // tslint:disable-next-line:class-name
 class lyricState {
-  lyrics: ''
+  lyrics: '';
 }

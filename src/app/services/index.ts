@@ -11,6 +11,6 @@ export const services = [
 
 export * from './tracks.service';
 export * from './ui.service';
-export * from './lyric.service'
+export * from './lyric.service';
 
 export default services;
