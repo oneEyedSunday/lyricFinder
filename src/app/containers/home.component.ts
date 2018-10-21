@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
     <app-search></app-search>
     <h3 class="text-center mb-4">{{ (uiStore.state$ | async ).heading}}</h3>
     <app-tracks [tracks]="tracks" *ngIf=" (!(uiStore.state$ | async)).error && tracks"></app-tracks>
-    <p class="lead alert alert-danger">{{ ( uiStore.state$ | async).error }} </p>
+    <p class="lead alert alert-danger" *ngIf="( uiStore.state$ | async).error">{{ ( uiStore.state$ | async).error }} </p>
   `,
   styles: []
 })

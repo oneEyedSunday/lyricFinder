@@ -27,7 +27,9 @@ export class TrackGuard implements CanActivate {
     if (data) {
       return true;
     } else {
+      // TODO (oneeyedsunday)
       // fetch tracks populate store
+      // or just find particular track
       this.store.fetchTracks();
     }
   }

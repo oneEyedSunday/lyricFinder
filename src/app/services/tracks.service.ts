@@ -78,6 +78,10 @@ export class TracksStore extends Store<TrackState> {
     return currTrack;
   }
 
+  // TODO (oneeyedsunday)\
+  // fix data structure
+  // so you switch between found tracks and ytacklist dependomg on urk;
+
   findTrack(query: string) {
     this.uiState.loading();
     this.http.get(
