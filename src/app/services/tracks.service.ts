@@ -5,6 +5,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {uiStore} from './ui.service';
 import ENV from './../../../env';
 import { Observable } from 'rxjs';
+import { SearchQuery as SearchQueryInterface } from './../interfaces/Search';
+
 
 @Injectable({
   providedIn: 'root'
@@ -47,7 +49,7 @@ export class TracksStore extends Store<TrackState> {
           tracklist : this.beatDown(json['message'].body.track_list)
         });
       }, (err: HttpErrorResponse) => {
-        this.uiState.setError(err.error);
+        this.uiState.setError(`An error occured, sorry: ${err.statusText}`);
       });
   }
 
@@ -82,10 +84,12 @@ export class TracksStore extends Store<TrackState> {
   // fix data structure
   // so you switch between found tracks and ytacklist dependomg on urk;
 
-  findTrack(query: string) {
+  findTrack(queryOptions: SearchQueryInterface) {
     this.uiState.loading();
     this.http.get(
-      `/api/ws/1.1/track.search?q_track=${query}&page_size=5&page=1&s_track_rating=desc&apikey=${ENV.apiKey}`).pipe(
+      // tslint:disable-next-line:max-line-length
+      `/api/ws/1.1/track.search?q_track=${queryOptions.title}
+      &page_size=${queryOptions.resultSize}&page=1&s_track_rating=desc&apikey=${ENV.apiKey}`).pipe(
         finalize(() => { this.uiState.notloading(); }),
         take(1)
       )
@@ -96,7 +100,7 @@ export class TracksStore extends Store<TrackState> {
           foundTracks : this.beatDown(json['message'].body.track_list)
         });
       }, (err: HttpErrorResponse) => {
-        this.uiState.setError(err.error);
+        this.uiState.setError(`An error occured, sorry: ${err.statusText}`);
       });
   }
 }
