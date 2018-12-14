@@ -6,16 +6,15 @@ import {uiStore} from './ui.service';
 import ENV from './../../../env';
 import { Observable } from 'rxjs';
 import { SearchQuery as SearchQueryInterface } from './../interfaces/Search';
+import { TrackType, TrackState } from './../interfaces/Track';
 
 
 @Injectable({
   providedIn: 'root'
 })
 export class TracksStore extends Store<TrackState> {
-  uiState: uiStore;
-  constructor(private http: HttpClient, _uiState: uiStore) {
+  constructor(private http: HttpClient, private uiState: uiStore) {
     super(new TrackState());
-    this.uiState = _uiState;
     // TODO (oneeyedsunday)
     // make search params customizable
   }
@@ -23,7 +22,7 @@ export class TracksStore extends Store<TrackState> {
   // TODO (oneeyedsunday)
   // follow observable pattern
   getTracksFromStoreOrAPI(): Observable<any> | any {
-    if (this.state.tracklist.length > 0 ) {
+    if (this.state.tracklist && this.state.tracklist.length > 0 ) {
       console.log('using data from store');
     } else {
       this.fetchTracks();
@@ -38,7 +37,7 @@ export class TracksStore extends Store<TrackState> {
   fetchTracks() {
     this.uiState.loading();
     // tslint:disable-next-line:max-line-length
-    this.http.get(`/api/ws/1.1/chart.tracks.get?page=1&page_size=10&country=jp&f_has_lyrics=1&apikey=${ENV.apiKey}`).pipe(
+    this.http.get(`/api/ws/1.1/chart.tracks.get?page=1&page_size=30&country=NA&f_has_lyrics=1&apikey=${ENV.apiKey}`).pipe(
       finalize(() => { this.uiState.notloading(); }),
       take(1)
     ).subscribe(
@@ -53,8 +52,8 @@ export class TracksStore extends Store<TrackState> {
       });
   }
 
-  beatDown(data): trackType[] {
-    const filtered: trackType[] = [];
+  beatDown(data): TrackType[] {
+    const filtered: TrackType[] = [];
     const deep = JSON.parse(JSON.stringify(data));
     deep.map(({track}) => {
       const {
@@ -69,8 +68,8 @@ export class TracksStore extends Store<TrackState> {
     return filtered;
   }
 
-  getTrackById(trackId: string): trackType {
-    let currTrack: trackType;
+  getTrackById(trackId: string): TrackType {
+    let currTrack: TrackType;
     this.state.tracklist.map(track => {
       if (track.track_id.toString() === trackId) {
         currTrack = track;
@@ -97,34 +96,10 @@ export class TracksStore extends Store<TrackState> {
         // console.log(json.message.body.track_list);
         this.setState({
           ...this.state,
-          foundTracks : this.beatDown(json['message'].body.track_list)
+          CurrentSearchTracks : this.beatDown(json['message'].body.track_list)
         });
       }, (err: HttpErrorResponse) => {
         this.uiState.setError(`An error occured, sorry: ${err.statusText}`);
       });
   }
-}
-
-// tslint:disable-next-line:class-name
-interface trackType {
-  track_name: string;
-  album_name: string;
-  artist_name: string;
-  track_id: string;
-  album_id: string;
-  primary_genres: any;
-  explicit: string;
-  first_release_date: string;
-}
-
-// tslint:disable-next-line:class-name
-interface tracknameType {
-  track: trackType;
-}
-
-
-class TrackState {
- tracklist: trackType[] = [
- ];
- foundTracks: trackType[] = [];
 }

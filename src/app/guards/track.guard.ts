@@ -11,7 +11,7 @@ export class TrackGuard implements CanActivate {
   canActivate(
     next: ActivatedRouteSnapshot,
     state: RouterStateSnapshot): Observable<boolean> | Promise<boolean> | boolean {
-      const id = next.paramMap.get('id');
+    const id = next.paramMap.get('id');
     this.getFromStoreOrAPI(id);
     return of(true);
   }
@@ -19,6 +19,8 @@ export class TrackGuard implements CanActivate {
   constructor(private store: TracksStore) {
   }
 
+  // or I could cache tracks in cachedTracks
+  // then search store, then cached tracks, then finally new API request
   getFromStoreOrAPI(id) {
     // don't just check if store is populated
     // since we get track data bar lyrics from store

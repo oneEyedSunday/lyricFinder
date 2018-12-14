@@ -1,3 +1,4 @@
+import { UiState, defaultState  } from './../interfaces/Ui';
 import { Injectable } from '@angular/core';
 import {Store} from 'rxjs-observable-store';
 
@@ -5,10 +6,10 @@ import {Store} from 'rxjs-observable-store';
   providedIn: 'root'
 })
 // tslint:disable-next-line:class-name
-export class uiStore extends Store<uiState> {
+export class uiStore extends Store<UiState> {
 
   constructor() {
-    super(new uiState());
+    super(new UiState());
   }
 
   toggleLoading() {
@@ -41,17 +42,11 @@ export class uiStore extends Store<uiState> {
     console.log('not loading called');
   }
 
-  setHeading(heading: string) {
-    this.setState({
-      ...this.state,
-      heading
-    });
-  }
-}
-
-// tslint:disable-next-line:class-name
-class uiState {
-  heading = 'Lyric Finder App - Powered by MusixMatch';
-  loading = true;
-  error = undefined;
+  setHeading(heading?: string) {
+    const newHeading: string = heading ? heading : defaultState.heading;
+      this.setState({
+        ...this.state,
+        heading: newHeading
+      });
+    }
 }
