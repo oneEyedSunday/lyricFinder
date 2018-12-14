@@ -7,9 +7,9 @@ import { TrackState } from '../interfaces/Track';
 @Component({
   selector: 'app-home',
   template: `
-    <app-loading *ngIf=" (uiStore.state$ | async).loading "></app-loading>
     <app-search (search)="_handleSearch($event)"></app-search>
     <h3 class="text-center mb-4">{{ (uiStore.state$ | async ).heading}}</h3>
+    <app-loading *ngIf=" (uiStore.state$ | async).loading "></app-loading>
     <ng-template [ngIf]="(!(uiStore.state$ | async)).error && tracks">
       <app-track *ngFor="let track of tracks" [track]="track"></app-track>
     </ng-template>
