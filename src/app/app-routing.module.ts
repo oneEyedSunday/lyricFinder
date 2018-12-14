@@ -6,8 +6,13 @@ import { LyricsComponent } from './components/lyrics.component';
 
 
 const routes: Routes = [
-  {path: '', component: fromContainers.HomeComponent},
-  {path: 'lyrics/track/:id', component: LyricsComponent, canActivate: [TrackGuard] }
+  {
+    path: '',
+    children: [
+      {path: '', component: fromContainers.HomeComponent},
+      {path: ':id', component: LyricsComponent, canActivate: [TrackGuard] }
+    ]
+  }
 ];
 
 @NgModule({
