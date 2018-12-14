@@ -1,4 +1,4 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { TracksStore as TracksService , uiStore as uiService} from './../services';
 import { SearchQuery as SearchQueryInterface } from './../interfaces/Search';
@@ -10,7 +10,7 @@ import { Subscription } from 'rxjs';
                 <h1 class="display-4 text-center">
                     <i class="fas fa-music"></i> Search For a Song
                 </h1>
-                <p class="lead text-center"> and Get the Lyrics for any song</p>
+                <p class="lead text-center"> and get the Lyrics</p>
                 <form [formGroup]="searchForm" (ngSubmit)="onSubmit()">
                     <div class="form-group">
                         <input class="form-control form-control-lg" placeholder="Song title..."  formControlName="trackTitle" />
@@ -42,11 +42,17 @@ import { Subscription } from 'rxjs';
 
 // TODO (oneeyedsunday)
 // emit a value to help with pagination
+
+// TODO (oneeyedsunday)
+// Home page country
+
+
 export class SearchComponent implements OnInit, OnDestroy {
-    trackTitle: FormControl;
-    noOfResults: FormControl;
-    searchForm: FormGroup;
-    searchOptionsSub: Subscription;
+  @Output() search = new EventEmitter();
+  trackTitle: FormControl;
+  noOfResults: FormControl;
+  searchForm: FormGroup;
+  searchOptionsSub: Subscription;
     constructor(private formBuilder: FormBuilder, private tracksService: TracksService,
         private _ui: uiService) {
           // TODO (oneeyedsunday)
@@ -64,6 +70,13 @@ export class SearchComponent implements OnInit, OnDestroy {
         });
 
         this.searchOptionsSub = this.searchForm.valueChanges.subscribe(changes => {
+          if (changes.trackTitle.length === 0 || this.searchForm.invalid) {
+            this.search.emit({
+              type: 'SHOW DEFAULT TRACKS',
+              code: 0
+            });
+            this._ui.setHeading();
+          }
           console.log(changes);
         });
     }
@@ -78,6 +91,11 @@ export class SearchComponent implements OnInit, OnDestroy {
           resultSize: parseInt(this.searchForm.value['noOfResults'], 10)
         };
         this.tracksService.findTrack(searchOptions);
+
+        this.search.emit({
+          type: 'Search Initiated',
+          code: 1
+        });
         // TODO (oneeyedsunday)
         // perhaps make this conditional on successful search
         this._ui.setHeading(`Search Results: ${searchOptions.title}`);
