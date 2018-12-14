@@ -12,7 +12,7 @@ import { Component, OnInit, Input } from '@angular/core';
            <br />
            <strong><i class="fas fa-compact-disc"></i> Album : </strong>{{track.album_name}}
           </p>
-          <a routerLink="/lyrics/track/{{track.track_id}}" class="btn btn-dark btn-block">
+          <a routerLink="/{{track.track_id}}" class="btn btn-dark btn-block">
             <i class="fas fa-chevron-right"></i> View Lyrics
           </a>
         </div>
