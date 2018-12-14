@@ -6,7 +6,7 @@ import { NavbarComponent } from './navbar.component';
 import { SearchComponent } from './search.component';
 
 
-const  components = [
+export const  components = [
     LoadingComponent,
     LyricsComponent,
     NavbarComponent,
@@ -15,4 +15,9 @@ const  components = [
     TracksComponent,
 ];
 
-export default components;
+export * from './loading.component';
+export * from './tracks.component';
+export * from './track.component';
+export * from './lyrics.component';
+export * from './navbar.component';
+export * from './search.component';

@@ -6,16 +6,16 @@ import {HttpClientModule} from '@angular/common/http';
 import {MomentModule} from 'ngx-moment';
 
 import { AppComponent } from './app.component';
-import components from './components';
-import containers from './containers';
-import services from './services';
+import * as fromComponents from './components';
+import * as fromContainers from './containers';
+import * as fromServices from './services';
 import { AppRoutingModule } from './app-routing.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ...components,
-    ...containers,
+    ...fromComponents.components,
+    ...fromContainers.containers,
   ],
   imports: [
     BrowserModule,
@@ -24,7 +24,7 @@ import { AppRoutingModule } from './app-routing.module';
     MomentModule,
     ReactiveFormsModule
   ],
-  providers: [...services],
+  providers: [...fromServices.services],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

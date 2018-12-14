@@ -2,10 +2,8 @@
 import { HomeComponent as Home } from './home.component';
 
 
-const  containers = [
+export const  containers = [
     Home
 ];
 
 export * from './home.component';
-
-export default containers;
