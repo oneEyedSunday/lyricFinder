@@ -37,7 +37,7 @@ export class TracksStore extends Store<TrackState> {
   fetchTracks() {
     this.uiState.loading();
     // tslint:disable-next-line:max-line-length
-    this.http.get(`/api/ws/1.1/chart.tracks.get?page=1&page_size=30&country=NA&f_has_lyrics=1&apikey=${ENV.apiKey}`).pipe(
+    this.http.get(`${ENV.baseAPIURL}/ws/1.1/chart.tracks.get?page=1&page_size=30&country=NA&f_has_lyrics=1&apikey=${ENV.apiKey}`).pipe(
       finalize(() => { this.uiState.notloading(); }),
       take(1)
     ).subscribe(
@@ -87,7 +87,7 @@ export class TracksStore extends Store<TrackState> {
     this.uiState.loading();
     this.http.get(
       // tslint:disable-next-line:max-line-length
-      `/api/ws/1.1/track.search?q_track=${queryOptions.title}
+      `${ENV.baseAPIURL}/ws/1.1/track.search?q_track=${queryOptions.title}
       &page_size=${queryOptions.resultSize}&page=1&s_track_rating=desc&apikey=${ENV.apiKey}`).pipe(
         finalize(() => { this.uiState.notloading(); }),
         take(1)
