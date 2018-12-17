@@ -57,10 +57,11 @@ export class SearchComponent implements OnInit, OnDestroy {
         private _ui: uiService) {
           // TODO (oneeyedsunday)
           // make users aware of errors
-       this.trackTitle = new FormControl('', Validators.required);
-       this.noOfResults = new FormControl(5, {
-         validators: [Validators.required, Validators.min(5), Validators.max(20)]
-       });
+          const { title, resultSize } = _ui.state.search || {title: '', resultSize: 5};
+          this.trackTitle = new FormControl(title, Validators.required);
+          this.noOfResults = new FormControl(resultSize, {
+          validators: [Validators.required, Validators.min(5), Validators.max(20)]
+        });
     }
 
     ngOnInit() {
@@ -77,12 +78,10 @@ export class SearchComponent implements OnInit, OnDestroy {
             });
             this._ui.setHeading();
           }
-          console.log(changes);
         });
     }
 
     onSubmit() {
-        // console.log(this.searchForm.controls);
         if (this.searchForm.invalid) {
           return;
         }
@@ -90,6 +89,7 @@ export class SearchComponent implements OnInit, OnDestroy {
           title: this.searchForm.value['trackTitle'],
           resultSize: parseInt(this.searchForm.value['noOfResults'], 10)
         };
+        this._ui.setSearchState(searchOptions);
         this.tracksService.findTrack(searchOptions);
 
         this.search.emit({
