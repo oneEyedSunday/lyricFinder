@@ -10,10 +10,10 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
   template: `
     <a routerLink="/" class="btn btn-dark btn-sm mb-4"><< Go Back</a>
     <div class="card">
-    <ng-container *ngIf="track">
+    <ng-template [ngIf]="track">
       <h5 class="card-header">{{track.track_name}} by &nbsp;
       <span class="text-secondary">{{track.artist_name}}</span></h5>
-    </ng-container>
+    </ng-template>
 
       <div class="card-body">
       <ng-container *ngIf="!(uiState.state$ | async).error">
