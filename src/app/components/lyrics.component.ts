@@ -10,31 +10,38 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
   template: `
     <a routerLink="/" class="btn btn-dark btn-sm mb-4"><< Go Back</a>
     <div class="card">
+    <ng-template [ngIf="card"]>
       <h5 class="card-header">{{track.track_name}} by &nbsp;
       <span class="text-secondary">{{track.artist_name}}</span></h5>
+    </ng-template>
+
       <div class="card-body">
-      <app-loading *ngIf="!(localStore.state$ | async).lyrics"></app-loading>
-      <p
-      @lyricsAnimation *ngIf="(localStore.state$ | async).lyrics">
-        {{ (localStore.state$ | async).lyrics }}
-      </p>
+      <ng-container *ngIf="!(uiState.state$ | async).error">
+        <app-loading *ngIf="!(localStore.state$ | async).lyrics"></app-loading>
+        <p
+        @lyricsAnimation *ngIf="(localStore.state$ | async).lyrics">
+          {{ (localStore.state$ | async).lyrics }}
+        </p>
+      </ng-container>
+      <p *ngIf="(uiState.state$ | async ).error" class="alert alert-danger">{{ (uiState.state$ | async).error }}</p>
       </div>
     </div>
-
-    <ul class="list-group mt-3">
-      <li class="list-group-item">
-        <strong>Album ID</strong>: {{  track.album_id }}
-      </li>
-      <li class="list-group-item">
-        <strong>Song Genre</strong>: {{  genre }}
-      </li>
-      <li class="list-group-item">
-        <strong>Explicit Words</strong>: {{  track.explicit ? 'Yes' : 'No' }}
-      </li>
-      <li class="list-group-item">
-        <strong>Release Date</strong>: {{  track.first_release_date | amDateFormat: 'LL'}}
-      </li>
-    </ul>
+    <ng-template [ngIf]="track">
+      <ul class="list-group mt-3">
+        <li class="list-group-item">
+          <strong>Album ID</strong>: {{  track.album_id }}
+        </li>
+        <li class="list-group-item">
+          <strong>Song Genre</strong>: {{  genre }}
+        </li>
+        <li class="list-group-item">
+          <strong>Explicit Words</strong>: {{  track.explicit ? 'Yes' : 'No' }}
+        </li>
+        <li class="list-group-item">
+          <strong>Release Date</strong>: {{  track.first_release_date | amDateFormat: 'LL'}}
+        </li>
+      </ul>
+    </ng-template>
   `,
   animations: [
     trigger('lyricsAnimation', [
@@ -74,23 +81,18 @@ export class LyricsComponent implements OnInit, OnDestroy {
     this.loading = true;
     this.routeSub = this.route.params.subscribe(params => {
       this.id = params['id'];
-      // this.localStore.fetchLyrics(this.track.track_id);
     });
 
     this.trackStore.state$.subscribe(data => {
       console.log('trackState change', data);
       this.track = this.trackStore.getTrackById(this.id);
-      this.localStore.fetchLyrics(this.track.track_id);
+      if (this.track) {
+        this.uiState.setError(undefined);
+        this.localStore.fetchLyrics(this.track.track_id, this.track.track_name);
+      }
     });
 
-    this.uiState.state$.subscribe(state => {
-      console.log('state change', state);
-      if (!this.track) {
-        this.track = this.trackStore.getTrackById(this.id);
-        this.localStore.fetchLyrics(this.track.track_id);
-      }
-      console.log(this.trackStore.state);
-    });
+    this.uiState.state$.subscribe(state => console.log(state));
   }
 
   ngOnDestroy() {
