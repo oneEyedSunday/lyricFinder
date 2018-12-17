@@ -58,11 +58,11 @@ export class TracksStore extends Store<TrackState> {
     deep.map(({track}) => {
       const {
         track_name, album_name, artist_name, track_id, primary_genres, explicit,
-        first_release_date, album_id
+        first_release_date, album_id, commontrack_id
       } = track;
       filtered.push( {
         track_name, album_name, artist_name, track_id, primary_genres, explicit,
-        first_release_date, album_id
+        first_release_date, album_id, commontrack_id
       });
     });
     return filtered;
@@ -70,12 +70,20 @@ export class TracksStore extends Store<TrackState> {
 
   getTrackById(trackId: string): TrackType {
     let currTrack: TrackType;
-    this.state.tracklist.map(track => {
-      if (track.track_id.toString() === trackId) {
-        currTrack = track;
-      }
-    });
+    const allTracks = [
+      ...this.state.tracklist,
+      ...this.state.cachedTracks,
+      ...this.state.CurrentSearchTracks
+    ];
 
+    for (let i = 0; i < allTracks.length; i++) {
+      if (allTracks[i].commontrack_id.toString() === trackId) {
+        console.log(allTracks[i], trackId);
+        currTrack = allTracks[i];
+        break;
+      }
+    }
+    console.log('currTrack', currTrack)
     return currTrack;
   }
 
@@ -93,7 +101,7 @@ export class TracksStore extends Store<TrackState> {
         take(1)
       )
       .subscribe(json => {
-        // console.log(json.message.body.track_list);
+        // console.log(json.message.body);
         this.setState({
           ...this.state,
           CurrentSearchTracks : this.beatDown(json['message'].body.track_list)
@@ -101,5 +109,32 @@ export class TracksStore extends Store<TrackState> {
       }, (err: HttpErrorResponse) => {
         this.uiState.setError(`An error occured, sorry: ${err.statusText}`);
       });
+  }
+
+  getTrackFromAPIByTrackId(trackId: string) {
+    this.uiState.loading();
+    this.http.get(`${ENV.baseAPIURL}/ws/1.1/track.get?commontrack_id=${trackId}&apikey=${ENV.apiKey}`)
+    .pipe(
+      finalize(() => { this.uiState.notloading(); }),
+      take(1)
+    ).subscribe(response => {
+      const {track} = response['message'].body;
+      const {
+        track_name, album_name, artist_name, track_id, primary_genres, explicit,
+        first_release_date, album_id, commontrack_id
+      } = track;
+      const filtered = {
+        track_name, album_name, artist_name, track_id, primary_genres, explicit,
+        first_release_date, album_id, commontrack_id
+      };
+      const formerCachedTracks = this.state.cachedTracks || [];
+      this.setState({
+        ...this.state,
+        cachedTracks: [...formerCachedTracks, filtered]
+      });
+      // add current track to state
+    }, (err: HttpErrorResponse) => {
+      this.uiState.setError(`An error occured, sorry: ${err.statusText}`);
+    });
   }
 }

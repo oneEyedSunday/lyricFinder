@@ -22,16 +22,28 @@ export class TrackGuard implements CanActivate {
   // or I could cache tracks in cachedTracks
   // then search store, then cached tracks, then finally new API request
   getFromStoreOrAPI(id) {
+    // check if store is populated
+    console.log(this.store.state);
+    console.log(this.store.state.tracklist);
     // don't just check if store is populated
     // since we get track data bar lyrics from store
-    const data = this.store.getTrackById(id);
-    console.log(data);
-    if (data) {
-      return true;
+    if (this.store.state && this.store.state.tracklist && this.store.state.tracklist.length) {
+      console.log('Store.state && store.state.tracklist && store.state.tracklist.length');
+      const data = this.store.getTrackById(id);
+      console.log(data);
+      if (data) {
+        return true;
+      } else {
+        // else find specify trcak
+        this.store.getTrackFromAPIByTrackId(id);
+      // and also top ten tracks
+      }
     } else {
+      console.log('here');
       // TODO (oneeyedsunday)
       // fetch tracks populate store
       // or just find particular track
+      this.store.getTrackFromAPIByTrackId(id);
       this.store.fetchTracks();
     }
   }
