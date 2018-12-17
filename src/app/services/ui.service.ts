@@ -49,4 +49,12 @@ export class uiStore extends Store<UiState> {
         heading: newHeading
       });
     }
+
+  setSearchState(searchState) {
+    console.log(searchState);
+    this.setState({
+      ...this.state,
+      search: searchState
+    });
+  }
 }
