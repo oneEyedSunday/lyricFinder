@@ -4,6 +4,7 @@ interface TrackType {
   artist_name: string;
   track_id: string;
   album_id: string;
+  commontrack_id: string;
   primary_genres: any;
   explicit: string;
   first_release_date: string;
@@ -11,9 +12,9 @@ interface TrackType {
 
 
 class TrackState {
- tracklist: TrackType[];
- CurrentSearchTracks: TrackType[];
- cachedTracks: TrackType[];
+ tracklist: TrackType[] = [];
+ CurrentSearchTracks: TrackType[] = [];
+ cachedTracks: TrackType[] = [];
 }
 
 export { TrackType, TrackState };
