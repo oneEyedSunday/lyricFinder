@@ -10,9 +10,9 @@ import { TrackState } from '../interfaces/Track';
     <app-search (search)="_handleSearch($event)"></app-search>
     <h3 class="text-center mb-4">{{ (uiStore.state$ | async ).heading}}</h3>
     <app-loading *ngIf=" (uiStore.state$ | async).loading "></app-loading>
-    <ng-template [ngIf]="(!(uiStore.state$ | async)).error && tracks">
+    <ng-container *ngIf="!(uiStore.state$ | async).error && tracks">
       <app-track *ngFor="let track of tracks" [track]="track"></app-track>
-    </ng-template>
+    </ng-container>
     <p class="alert alert-danger" *ngIf="( uiStore.state$ | async).error">{{ ( uiStore.state$ | async).error }} </p>
   `,
   styles: []
