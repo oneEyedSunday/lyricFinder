@@ -8,7 +8,7 @@ interface LyricObjectInterface {
 }
 
 class LyricsState {
-  lyrics: {};
+  lyrics = {};
 }
 
 export { LyricsState, LyricInterface, LyricObjectInterface };
