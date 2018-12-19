@@ -1,9 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
-import { uiStore as uiState } from '../services/ui.service';
-import { TracksStore } from '../services';
 import { Subscription } from 'rxjs';
-import { TrackState } from '../interfaces/Track';
-import { eContext } from '../interfaces/Ui';
+import { uiStore as uiState, TracksStore } from '../services';
+import { TrackState as TrackStateInterface, eContext } from '../interfaces';
 
 @Component({
   selector: 'app-home',
@@ -20,7 +18,7 @@ import { eContext } from '../interfaces/Ui';
 })
 export class HomeComponent implements OnInit, OnDestroy {
   tracks = undefined;
-  allTracksInState: TrackState;
+  allTracksInState: TrackStateInterface;
   tracksStoreSub: Subscription;
   constructor(public uiStore: uiState, public tracksStore: TracksStore) {}
 

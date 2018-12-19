@@ -1,4 +1,4 @@
-import { UiState, defaultState  } from './../interfaces/Ui';
+import { UiState, defaultUiState  } from './../interfaces';
 import { Injectable } from '@angular/core';
 import {Store} from 'rxjs-observable-store';
 
@@ -43,7 +43,7 @@ export class uiStore extends Store<UiState> {
   }
 
   setHeading(heading?: string) {
-    const newHeading: string = heading ? heading : defaultState.heading;
+    const newHeading: string = heading ? heading : defaultUiState.heading;
       this.setState({
         ...this.state,
         heading: newHeading

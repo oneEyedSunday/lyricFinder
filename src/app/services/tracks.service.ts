@@ -5,8 +5,8 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {uiStore} from './ui.service';
 import ENV from './../../../env';
 import { Observable, throwError } from 'rxjs';
-import { SearchQuery as SearchQueryInterface } from './../interfaces/Search';
-import { TrackType, TrackState } from './../interfaces/Track';
+import { SearchQuery as SearchQueryInterface } from './../interfaces';
+import { TrackType, TrackState } from './../interfaces';
 
 
 @Injectable({

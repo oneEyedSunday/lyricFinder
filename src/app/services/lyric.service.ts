@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import {Store} from 'rxjs-observable-store';
 import { HttpClient } from '@angular/common/http';
 import ENV from './../../../env';
-import { LyricsState } from '../interfaces/Lyrics';
+import { LyricsState } from '../interfaces';
 import { uiStore } from '../services/ui.service';
 
 @Injectable({

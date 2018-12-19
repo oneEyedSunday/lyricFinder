@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
 import { FormControl, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { TracksStore as TracksService , uiStore as uiService} from './../services';
-import { SearchQuery as SearchQueryInterface } from './../interfaces/Search';
+import { SearchQuery as SearchQueryInterface } from './../interfaces';
 import { Subscription } from 'rxjs';
 @Component({
     selector: 'app-search',

@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {Subscription} from 'rxjs';
 import { lyricStore, TracksStore, uiStore } from './../services';
-import { TrackType as TrackModel } from '../interfaces/Track';
+import { TrackType as TrackModel } from '../interfaces';
 import { trigger, transition, group, query, style, animate, stagger, keyframes } from '@angular/animations';
 
 @Component({
