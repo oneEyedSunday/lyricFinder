@@ -67,11 +67,13 @@ export class LyricsComponent implements OnInit, OnDestroy {
   routeSub: Subscription;
   track: TrackModel;
   lyrics: LyricModel;
+  apiCallSent: boolean;
   constructor(private _route: ActivatedRoute, private _lyricStore: lyricStore,
     private _trackStore: TracksStore,
     public _uiState: uiStore) {}
 
   ngOnInit() {
+    this.apiCallSent = false;
     this.routeSub = this._route.params.subscribe(params => {
       this.id = params['id'];
     });
@@ -81,7 +83,11 @@ export class LyricsComponent implements OnInit, OnDestroy {
       this.track = this._trackStore.getTrackById(this.id);
       if (this.track) {
         this._uiState.setError(undefined);
-        this._lyricStore.fetchLyrics(this.track.track_id, this.track.track_name);
+        if (!this.apiCallSent) {
+          // prevent another call to fetch lyrics
+          this._lyricStore.fetchLyrics(this.track.track_id, this.track.track_name);
+          this.apiCallSent = true;
+        }
       }
     });
 
