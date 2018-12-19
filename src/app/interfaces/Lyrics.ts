@@ -1,5 +1,6 @@
 interface LyricInterface {
   text: string;
+  error: string;
 }
 
 interface LyricObjectInterface {
@@ -7,7 +8,7 @@ interface LyricObjectInterface {
 }
 
 class LyricsState {
-  lyrics: LyricObjectInterface[];
+  lyrics: {};
 }
 
 export { LyricsState, LyricInterface, LyricObjectInterface };
