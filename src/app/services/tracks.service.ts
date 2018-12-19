@@ -4,7 +4,7 @@ import { skip, finalize, take } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import {uiStore} from './ui.service';
 import ENV from './../../../env';
-import { Observable, throwError } from 'rxjs';
+import { Observable } from 'rxjs';
 import { SearchQuery as SearchQueryInterface } from './../interfaces';
 import { TrackType, TrackState } from './../interfaces';
 
@@ -37,7 +37,6 @@ export class TracksStore extends Store<TrackState> {
     }
   }
 
-  // TODO: add env file and config
   fetchTracks() {
     this.uiState.loading();
     // tslint:disable-next-line:max-line-length
@@ -74,7 +73,7 @@ export class TracksStore extends Store<TrackState> {
 
   getTrackById(trackId: string): TrackType {
     let currTrack: TrackType;
-    const allTracks = [
+    const allTracks: TrackType[] = [
       ...this.state.tracklist,
       ...this.state.cachedTracks,
       ...this.state.CurrentSearchTracks
@@ -82,23 +81,16 @@ export class TracksStore extends Store<TrackState> {
 
     for (let i = 0; i < allTracks.length; i++) {
       if (allTracks[i].commontrack_id.toString() === trackId) {
-        console.log(allTracks[i], trackId);
         currTrack = allTracks[i];
         break;
       }
     }
-    console.log('currTrack', currTrack)
     return currTrack;
   }
-
-  // TODO (oneeyedsunday)\
-  // fix data structure
-  // so you switch between found tracks and ytacklist dependomg on urk;
 
   findTrack(queryOptions: SearchQueryInterface) {
     this.uiState.loading();
     this.http.get(
-      // tslint:disable-next-line:max-line-length
       `${ENV.baseAPIURL}/ws/1.1/track.search?q_track=${queryOptions.title}
       &page_size=${queryOptions.resultSize}&page=1&s_track_rating=desc&apikey=${ENV.apiKey}`).pipe(
         finalize(() => {
@@ -107,11 +99,12 @@ export class TracksStore extends Store<TrackState> {
         }),
         take(1)
       )
-      .subscribe(json => {
+      .subscribe(response => {
         // console.log(json.message.body);
+        const { track_list } = response['message'].body;
         this.setState({
           ...this.state,
-          CurrentSearchTracks : this.beatDown(json['message'].body.track_list)
+          CurrentSearchTracks : this.beatDown(track_list)
         });
       }, (err: HttpErrorResponse) => {
         this.uiState.setError(`An error occured, sorry: ${err.statusText}`);
@@ -125,7 +118,7 @@ export class TracksStore extends Store<TrackState> {
       finalize(() => { this.uiState.notloading(); }),
       take(1)
     ).subscribe(response => {
-      console.log(response['message'].header.status_code);
+      // console.log(response['message'].header.status_code);
       const { status_code } = response['message'].header;
       if (status_code !== 200) {
         const errorMessage = status_code === 404 ? 'The track was not found' : 'An error occured';
@@ -144,7 +137,7 @@ export class TracksStore extends Store<TrackState> {
           first_release_date, album_id, commontrack_id
         };
         if (filtered) {
-          console.log('filtered');
+          // console.log('filtered');
           const formerCachedTracks = this.state.cachedTracks || [];
 
           this.setState({
@@ -155,7 +148,7 @@ export class TracksStore extends Store<TrackState> {
       }
       // add current track to state
     }, (err: HttpErrorResponse) => {
-      console.log(err);
+      console.error(err);
       this.uiState.setError(`An error occured, sorry: ${err.statusText}`);
     });
   }
