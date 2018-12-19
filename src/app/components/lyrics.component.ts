@@ -20,7 +20,7 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
         <app-loading *ngIf="!(localStore.state$ | async).lyrics"></app-loading>
         <p
         @lyricsAnimation *ngIf="(localStore.state$ | async).lyrics">
-          {{ (localStore.state$ | async).lyrics }}
+          {{ (localStore.state$ | async).lyrics[track.track_id].text }}
         </p>
       </ng-container>
       <p *ngIf="(uiState.state$ | async ).error" class="alert alert-danger">{{ (uiState.state$ | async).error }}</p>
@@ -56,7 +56,6 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
     ])
   ],
   styles: [],
-  providers: [lyricStore]
 })
 export class LyricsComponent implements OnInit, OnDestroy {
   id: string;
@@ -75,6 +74,8 @@ export class LyricsComponent implements OnInit, OnDestroy {
     this.localStore = _lyricStore;
     this.route = _route;
     this.uiState = _uiState;
+
+    _lyricStore.state$.subscribe(state => console.log('Lyric state update', state));
   }
 
   ngOnInit() {
