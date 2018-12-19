@@ -34,7 +34,7 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
     <ng-template [ngIf]="track">
       <ul class="list-group mt-3">
         <li class="list-group-item">
-          <strong>Album ID</strong>: {{  track.album_id }}
+          <strong>Album</strong>: {{  track.album_name }}
         </li>
         <li class="list-group-item">
           <strong>Song Genre</strong>: {{  genre }}
