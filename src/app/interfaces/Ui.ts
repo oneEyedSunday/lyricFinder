@@ -24,6 +24,10 @@ interface UiStateInterface {
   search: SearchState;
 }
 
+// export as defaultUiState since i'm now
+// importing via an index file
+// defaultState is a generic name
+
 const  defaultState: UiStateInterface = {
   heading: 'Lyric Finder App - Powered by MusixMatch',
   loading: false,
@@ -33,7 +37,7 @@ const  defaultState: UiStateInterface = {
 };
 
 export {
-  defaultState,
+  defaultState as defaultUiState,
   UiState,
   UiStateInterface,
   eContext
