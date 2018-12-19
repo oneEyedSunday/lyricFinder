@@ -16,7 +16,7 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
     </ng-template>
 
       <div class="card-body">
-      <ng-container *ngIf="!(uiState.state$ | async).error">
+      <ng-container *ngIf="!(_uiState.state$ | async).error">
         <app-loading *ngIf="!track || !lyrics"></app-loading>
         <p @lyricsAnimation
         *ngIf="track && lyrics && lyrics.text">
@@ -28,7 +28,7 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
           {{ lyrics.error }}
         </p>
       </ng-container>
-      <p *ngIf="(uiState.state$ | async ).error" class="alert alert-danger">{{ (uiState.state$ | async).error }}</p>
+      <p *ngIf="(_uiState.state$ | async ).error" class="alert alert-danger">{{ (_uiState.state$ | async).error }}</p>
       </div>
     </div>
     <ng-template [ngIf]="track">
@@ -65,40 +65,28 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
 export class LyricsComponent implements OnInit, OnDestroy {
   id: string;
   routeSub: Subscription;
-  lyricState: lyricStore;
-  trackStore: TracksStore;
-  uiState: uiStore;
-  route: ActivatedRoute;
-  loading: boolean;
-  error: boolean;
   track: TrackModel;
   lyrics: LyricModel;
   constructor(private _route: ActivatedRoute, private _lyricStore: lyricStore,
     private _trackStore: TracksStore,
-    private _uiState: uiStore) {
-    this.trackStore = _trackStore;
-    this.lyricState = _lyricStore;
-    this.route = _route;
-    this.uiState = _uiState;
-  }
+    public _uiState: uiStore) {}
 
   ngOnInit() {
-    this.loading = true;
-    this.routeSub = this.route.params.subscribe(params => {
+    this.routeSub = this._route.params.subscribe(params => {
       this.id = params['id'];
     });
 
-    this.trackStore.state$.subscribe(data => {
+    this._trackStore.state$.subscribe(data => {
       console.log('trackState change', data);
-      this.track = this.trackStore.getTrackById(this.id);
+      this.track = this._trackStore.getTrackById(this.id);
       if (this.track) {
-        this.uiState.setError(undefined);
-        this.lyricState.fetchLyrics(this.track.track_id, this.track.track_name);
+        this._uiState.setError(undefined);
+        this._lyricStore.fetchLyrics(this.track.track_id, this.track.track_name);
       }
     });
 
 
-    this.lyricState.state$.subscribe(lyricState => {
+    this._lyricStore.state$.subscribe(lyricState => {
       console.log('Lyric state update', lyricState);
       if (this.track) {
         this.lyrics = lyricState.lyrics[this.track.track_id];
@@ -106,7 +94,7 @@ export class LyricsComponent implements OnInit, OnDestroy {
     });
 
 
-    this.uiState.state$.subscribe(state => console.log(state));
+    this._uiState.state$.subscribe(state => console.log(state));
   }
 
   ngOnDestroy() {

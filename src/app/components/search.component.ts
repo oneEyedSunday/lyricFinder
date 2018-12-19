@@ -53,7 +53,7 @@ export class SearchComponent implements OnInit, OnDestroy {
   noOfResults: FormControl;
   searchForm: FormGroup;
   searchOptionsSub: Subscription;
-    constructor(private formBuilder: FormBuilder, private tracksService: TracksService,
+    constructor(private formBuilder: FormBuilder, private _tracksService: TracksService,
         private _ui: uiService) {
           // TODO (oneeyedsunday)
           // make users aware of errors
@@ -90,7 +90,7 @@ export class SearchComponent implements OnInit, OnDestroy {
           resultSize: parseInt(this.searchForm.value['noOfResults'], 10)
         };
         this._ui.setSearchState(searchOptions);
-        this.tracksService.findTrack(searchOptions);
+        this._tracksService.findTrack(searchOptions);
 
         this.search.emit({
           type: 'Search Initiated',

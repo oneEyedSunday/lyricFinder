@@ -11,11 +11,9 @@ import { uiStore } from '../services/ui.service';
 })
 // tslint:disable-next-line:class-name
 export class lyricStore extends Store<LyricsState> {
-  uiState: uiStore;
 
-  constructor(private http: HttpClient, private _ui: uiStore) {
+  constructor(private http: HttpClient, public _uiState: uiStore) {
     super(new LyricsState());
-    this.uiState = _ui;
   }
 
   fetchLyrics(trackId: string | number, trackName?: string) {
@@ -29,7 +27,7 @@ export class lyricStore extends Store<LyricsState> {
       `${ENV.baseAPIURL}/ws/1.1/track.lyrics.get?track_id=${trackId}
       &apikey=${ENV.apiKey}`)
       .pipe(
-        finalize(() => this._ui.notloading())
+        finalize(() => this._uiState.notloading())
       )
       .subscribe(response => {
         const { status_code } = response['message'].header;
@@ -43,9 +41,9 @@ export class lyricStore extends Store<LyricsState> {
               }
             });
           } else {
-            this.uiState.setError('Sorry, an error occured');
+            this._uiState.setError('Sorry, an error occured');
           }
-          this.uiState.notloading();
+          this._uiState.notloading();
         } else if (lyrics) {
           const typeToLyricObjectInterface: LyricObjectInterface  = {
             [trackId]: { text: lyrics.lyrics_body, error: null }
@@ -56,10 +54,10 @@ export class lyricStore extends Store<LyricsState> {
 
           // clear error
           // or separate lyric and track errors
-          this.uiState.setError(undefined);
+          this._uiState.setError(undefined);
         }
       }, (err: HttpErrorResponse) => {
-        this.uiState.setError(`Sorry, an error occured: ${err.statusText}`);
+        this._uiState.setError(`Sorry, an error occured: ${err.statusText}`);
       });
   }
 }

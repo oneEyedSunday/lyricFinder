@@ -1,7 +1,7 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { Subscription } from 'rxjs';
 import { uiStore as uiState, TracksStore } from '../services';
-import { TrackState as TrackStateInterface, eContext } from '../interfaces';
+import { TrackState as TrackStateInterface, TrackType, eContext } from '../interfaces';
 
 @Component({
   selector: 'app-home',
@@ -17,10 +17,10 @@ import { TrackState as TrackStateInterface, eContext } from '../interfaces';
   styles: []
 })
 export class HomeComponent implements OnInit, OnDestroy {
-  tracks = undefined;
+  tracks: TrackType = undefined;
   allTracksInState: TrackStateInterface;
   tracksStoreSub: Subscription;
-  constructor(public uiStore: uiState, public tracksStore: TracksStore) {}
+  constructor(public uiStore: uiState, private tracksStore: TracksStore) {}
 
   ngOnInit() {
     this.tracksStore.getTracksFromStoreOrAPI();
