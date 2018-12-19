@@ -2,7 +2,7 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import {Subscription} from 'rxjs';
 import { lyricStore, TracksStore, uiStore } from './../services';
-import { TrackType as TrackModel } from '../interfaces';
+import { TrackType as TrackModel, LyricInterface as LyricModel } from '../interfaces';
 import { trigger, transition, group, query, style, animate, stagger, keyframes } from '@angular/animations';
 
 @Component({
@@ -17,15 +17,15 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
 
       <div class="card-body">
       <ng-container *ngIf="!(uiState.state$ | async).error">
-        <app-loading *ngIf="!track || !(lyricState.state$ | async).lyrics[track.track_id]"></app-loading>
+        <app-loading *ngIf="!track || !lyrics"></app-loading>
         <p @lyricsAnimation
-        *ngIf="track && (lyricState.state$ | async).lyrics[track.track_id] && (lyricState.state$ | async).lyrics[track.track_id].text">
-          {{ (lyricState.state$ | async).lyrics[track.track_id].text }}
+        *ngIf="track && lyrics && lyrics.text">
+          {{ lyrics.text }}
         </p>
         <p
-        *ngIf="track && (lyricState.state$ | async).lyrics[track.track_id] && (lyricState.state$ | async).lyrics[track.track_id].error"
+        *ngIf="track && lyrics && lyrics.error"
         class="alert alert-danger">
-          {{ (lyricState.state$ | async).lyrics[track.track_id].error }}
+          {{ lyrics.error }}
         </p>
       </ng-container>
       <p *ngIf="(uiState.state$ | async ).error" class="alert alert-danger">{{ (uiState.state$ | async).error }}</p>
@@ -72,6 +72,7 @@ export class LyricsComponent implements OnInit, OnDestroy {
   loading: boolean;
   error: boolean;
   track: TrackModel;
+  lyrics: LyricModel;
   constructor(private _route: ActivatedRoute, private _lyricStore: lyricStore,
     private _trackStore: TracksStore,
     private _uiState: uiStore) {
@@ -79,8 +80,6 @@ export class LyricsComponent implements OnInit, OnDestroy {
     this.lyricState = _lyricStore;
     this.route = _route;
     this.uiState = _uiState;
-
-    _lyricStore.state$.subscribe(state => console.log('Lyric state update', state));
   }
 
   ngOnInit() {
@@ -98,11 +97,21 @@ export class LyricsComponent implements OnInit, OnDestroy {
       }
     });
 
+
+    this.lyricState.state$.subscribe(lyricState => {
+      console.log('Lyric state update', lyricState);
+      if (this.track) {
+        this.lyrics = lyricState.lyrics[this.track.track_id];
+      }
+    });
+
+
     this.uiState.state$.subscribe(state => console.log(state));
   }
 
   ngOnDestroy() {
     this.routeSub.unsubscribe();
+    // TODO : unsubcribe from subscriptions
   }
 
   get genre(): string {
