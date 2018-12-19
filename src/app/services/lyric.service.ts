@@ -35,8 +35,16 @@ export class lyricStore extends Store<LyricsState> {
         const { status_code } = response['message'].header;
         const { lyrics } = response['message'].body;
         if (status_code !== 200) {
-          const errorMessage = status_code === 404 ? `The lyrics for ${trackName} were not found` : 'An error occured';
-          this.uiState.setError(errorMessage);
+          if (status_code === 404) {
+            this.setState({
+              lyrics: {
+                ...this.state.lyrics,
+                [trackId]: { text: null, error: `The lyrics for ${trackName} were not found in the API` }
+              }
+            });
+          } else {
+            this.uiState.setError('An error occured');
+          }
           this.uiState.notloading();
         } else if (lyrics) {
           const typeToLyricObjectInterface: LyricObjectInterface  = {
