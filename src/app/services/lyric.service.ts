@@ -43,7 +43,7 @@ export class lyricStore extends Store<LyricsState> {
               }
             });
           } else {
-            this.uiState.setError('An error occured');
+            this.uiState.setError('Sorry, an error occured');
           }
           this.uiState.notloading();
         } else if (lyrics) {
@@ -59,7 +59,7 @@ export class lyricStore extends Store<LyricsState> {
           this.uiState.setError(undefined);
         }
       }, (err: HttpErrorResponse) => {
-        this.uiState.setError(`An error occured, sorry: ${err.statusText}`);
+        this.uiState.setError(`Sorry, an error occured: ${err.statusText}`);
       });
   }
 }

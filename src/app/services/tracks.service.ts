@@ -51,7 +51,7 @@ export class TracksStore extends Store<TrackState> {
           tracklist : this.beatDown(json['message'].body.track_list)
         });
       }, (err: HttpErrorResponse) => {
-        this.uiState.setError(`An error occured, sorry: ${err.statusText}`);
+        this.uiState.setError(`Sorry, an error occured: ${err.statusText}`);
       });
   }
 
@@ -107,7 +107,7 @@ export class TracksStore extends Store<TrackState> {
           CurrentSearchTracks : this.beatDown(track_list)
         });
       }, (err: HttpErrorResponse) => {
-        this.uiState.setError(`An error occured, sorry: ${err.statusText}`);
+        this.uiState.setError(`Sorry, an error occured: ${err.statusText}`);
       });
   }
 
@@ -121,7 +121,7 @@ export class TracksStore extends Store<TrackState> {
       // console.log(response['message'].header.status_code);
       const { status_code } = response['message'].header;
       if (status_code !== 200) {
-        const errorMessage = status_code === 404 ? 'The track was not found' : 'An error occured';
+        const errorMessage = status_code === 404 ? 'The track was not found' : 'Sorry, an error occured';
         this.uiState.setError(errorMessage);
         this.uiState.notloading();
       }
@@ -149,7 +149,7 @@ export class TracksStore extends Store<TrackState> {
       // add current track to state
     }, (err: HttpErrorResponse) => {
       console.error(err);
-      this.uiState.setError(`An error occured, sorry: ${err.statusText}`);
+      this.uiState.setError(`Sorry, an error occured: ${err.statusText}`);
     });
   }
 }
