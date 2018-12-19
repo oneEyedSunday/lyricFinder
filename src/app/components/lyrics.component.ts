@@ -17,10 +17,15 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
 
       <div class="card-body">
       <ng-container *ngIf="!(uiState.state$ | async).error">
-        <app-loading *ngIf="!(localStore.state$ | async).lyrics"></app-loading>
+        <app-loading *ngIf="!track || !(lyricState.state$ | async).lyrics[track.track_id]"></app-loading>
+        <p @lyricsAnimation
+        *ngIf="track && (lyricState.state$ | async).lyrics[track.track_id] && (lyricState.state$ | async).lyrics[track.track_id].text">
+          {{ (lyricState.state$ | async).lyrics[track.track_id].text }}
+        </p>
         <p
-        @lyricsAnimation *ngIf="(localStore.state$ | async).lyrics">
-          {{ (localStore.state$ | async).lyrics[track.track_id].text }}
+        *ngIf="track && (lyricState.state$ | async).lyrics[track.track_id] && (lyricState.state$ | async).lyrics[track.track_id].error"
+        class="alert alert-danger">
+          {{ (lyricState.state$ | async).lyrics[track.track_id].error }}
         </p>
       </ng-container>
       <p *ngIf="(uiState.state$ | async ).error" class="alert alert-danger">{{ (uiState.state$ | async).error }}</p>
@@ -60,7 +65,7 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
 export class LyricsComponent implements OnInit, OnDestroy {
   id: string;
   routeSub: Subscription;
-  localStore: lyricStore;
+  lyricState: lyricStore;
   trackStore: TracksStore;
   uiState: uiStore;
   route: ActivatedRoute;
@@ -71,7 +76,7 @@ export class LyricsComponent implements OnInit, OnDestroy {
     private _trackStore: TracksStore,
     private _uiState: uiStore) {
     this.trackStore = _trackStore;
-    this.localStore = _lyricStore;
+    this.lyricState = _lyricStore;
     this.route = _route;
     this.uiState = _uiState;
 
@@ -89,7 +94,7 @@ export class LyricsComponent implements OnInit, OnDestroy {
       this.track = this.trackStore.getTrackById(this.id);
       if (this.track) {
         this.uiState.setError(undefined);
-        this.localStore.fetchLyrics(this.track.track_id, this.track.track_name);
+        this.lyricState.fetchLyrics(this.track.track_id, this.track.track_name);
       }
     });
 
