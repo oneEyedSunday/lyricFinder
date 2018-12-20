@@ -11,8 +11,15 @@ import { TrackState as TrackStateInterface, TrackType, eContext } from '../inter
     <p class="alert alert-danger" *ngIf="( uiStore.state$ | async).error">{{ ( uiStore.state$ | async).error }} </p>
     <app-loading *ngIf=" (uiStore.state$ | async).loading "></app-loading>
     <ng-container *ngIf="tracks">
-      <app-track *ngFor="let track of tracks" [track]="track"></app-track>
+      <div class="row">
+        <ng-container *ngFor="let track of tracks">
+          <div class="col col-sm col-md-6 col-lg-4 col-xl-2 my-2">
+            <app-track [track]="track"></app-track>
+          </div>
+        </ng-container>
+      </div>
     </ng-container>
+
   `,
   styles: []
 })

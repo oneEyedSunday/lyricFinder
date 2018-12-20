@@ -3,8 +3,7 @@ import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core
 @Component({
   selector: 'app-track',
   template: `
-    <div class="col">
-      <div class="card mb-4 shadow-sm">
+      <div class="card mb-4 shadow-sm height--fix">
         <div class="card-body">
           <h5>{{track.artist_name}}</h5>
           <p class="card-text">
@@ -17,10 +16,15 @@ import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core
           </a>
         </div>
       </div>
-    </div>
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
-  styles: []
+  styles: [
+    `
+    .height--fix {
+      height: 90%;
+    }
+    `
+  ]
 })
 export class TrackComponent implements OnInit {
   @Input() track;
