@@ -42,9 +42,6 @@ import { trigger, transition, style, animate, keyframes } from '@angular/animati
         <li class="list-group-item">
           <strong>Explicit Words</strong>: {{  track.explicit ? 'Yes' : 'No' }}
         </li>
-        <li class="list-group-item">
-          <strong>Release Date</strong>: {{  track.first_release_date | amDateFormat: 'LL'}}
-        </li>
       </ul>
     </ng-template>
   `,
