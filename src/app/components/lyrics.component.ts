@@ -11,7 +11,7 @@ import { trigger, transition, style, animate, keyframes } from '@angular/animati
     <a routerLink="/" class="btn btn-dark btn-sm mb-4"><< Go Back</a>
     <div class="card">
     <ng-template [ngIf]="track">
-      <h5 class="card-header">{{track.track_name}} by &nbsp;
+      <h5 class="card-header">{{track.track_name}} <span class="font-italic">by</span> &nbsp;
       <span class="text-secondary">{{track.artist_name}}</span></h5>
     </ng-template>
 
