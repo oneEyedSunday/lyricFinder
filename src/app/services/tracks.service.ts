@@ -99,7 +99,6 @@ export class TracksStore extends Store<TrackState> {
       .pipe(
         finalize(() => {
           this.uiState.notloading();
-          this.uiState.setError(undefined);
         }),
         take(1)
       )
@@ -109,6 +108,7 @@ export class TracksStore extends Store<TrackState> {
           ...this.state,
           CurrentSearchTracks : this.getRequiredProps(track_list)
         });
+        this.uiState.setError(undefined);
       }, (err: HttpErrorResponse) => {
         this.uiState.setError(`Sorry, an error occured: ${err.statusText}`);
       });
