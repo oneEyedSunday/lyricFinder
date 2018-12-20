@@ -3,7 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import {Subscription} from 'rxjs';
 import { lyricStore, TracksStore, uiStore } from './../services';
 import { TrackType as TrackModel, LyricInterface as LyricModel } from '../interfaces';
-import { trigger, transition, group, query, style, animate, stagger, keyframes } from '@angular/animations';
+import { trigger, transition, style, animate, keyframes } from '@angular/animations';
 
 @Component({
   selector: 'app-lyrics',
@@ -65,6 +65,8 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
 export class LyricsComponent implements OnInit, OnDestroy {
   id: string;
   routeSub: Subscription;
+  lyricStoreSubscription: Subscription;
+  trackStoreSubscription: Subscription;
   track: TrackModel;
   lyrics: LyricModel;
   apiCallSent: boolean;
@@ -78,8 +80,7 @@ export class LyricsComponent implements OnInit, OnDestroy {
       this.id = params['id'];
     });
 
-    this._trackStore.state$.subscribe(data => {
-      console.log('trackState change', data);
+    this.trackStoreSubscription = this._trackStore.state$.subscribe(() => {
       this.track = this._trackStore.getTrackById(this.id);
       if (this.track) {
         this._uiState.setError(undefined);
@@ -91,21 +92,17 @@ export class LyricsComponent implements OnInit, OnDestroy {
       }
     });
 
-
-    this._lyricStore.state$.subscribe(lyricState => {
-      console.log('Lyric state update', lyricState);
+    this.lyricStoreSubscription = this._lyricStore.state$.subscribe(lyricState => {
       if (this.track) {
         this.lyrics = lyricState.lyrics[this.track.track_id];
       }
     });
-
-
-    this._uiState.state$.subscribe(state => console.log(state));
   }
 
   ngOnDestroy() {
     this.routeSub.unsubscribe();
-    // TODO : unsubcribe from subscriptions
+    this.trackStoreSubscription.unsubscribe();
+    this.lyricStoreSubscription.unsubscribe();
   }
 
   get genre(): string {
