@@ -24,11 +24,11 @@ import { trigger, transition, group, query, style, animate, stagger, keyframes }
         </p>
         <p
         *ngIf="track && lyrics && lyrics.error"
-        class="alert alert-danger">
+        class="alert alert-danger text-center">
           {{ lyrics.error }}
         </p>
       </ng-container>
-      <p *ngIf="(_uiState.state$ | async ).error" class="alert alert-danger">{{ (_uiState.state$ | async).error }}</p>
+      <p *ngIf="(_uiState.state$ | async ).error" class="alert alert-danger text-center">{{ (_uiState.state$ | async).error }}</p>
       </div>
     </div>
     <ng-template [ngIf]="track">

@@ -8,7 +8,7 @@ import { TrackState as TrackStateInterface, TrackType, eContext } from '../inter
   template: `
     <app-search (search)="_handleSearch($event)"></app-search>
     <h3 class="text-center mb-4">{{ (uiStore.state$ | async ).heading}}</h3>
-    <p class="alert alert-danger" *ngIf="( uiStore.state$ | async).error">{{ ( uiStore.state$ | async).error }} </p>
+    <p class="alert alert-danger text-center" *ngIf="( uiStore.state$ | async).error">{{ ( uiStore.state$ | async).error }} </p>
     <app-loading *ngIf=" (uiStore.state$ | async).loading "></app-loading>
     <ng-container *ngIf="tracks">
       <div class="row">
