@@ -7,7 +7,6 @@ interface TrackType {
   commontrack_id: string;
   primary_genres: any;
   explicit: string;
-  first_release_date: string;
 }
 
 
