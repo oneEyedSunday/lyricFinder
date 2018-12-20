@@ -24,8 +24,7 @@ export class lyricStore extends Store<LyricsState> {
     console.log(`fetching lyrics for: ${trackName} with id: ${trackId}`);
     // tslint:disable-next-line:max-line-length
     this.http.get(
-      `${ENV.baseAPIURL}/ws/1.1/track.lyrics.get?track_id=${trackId}
-      &apikey=${ENV.apiKey}`)
+      `${ENV.baseAPIURL}/ws/1.1/track.lyrics.get?track_id=${trackId}&apikey=${ENV.apiKey}`)
       .pipe(
         finalize(() => this._uiState.notloading())
       )

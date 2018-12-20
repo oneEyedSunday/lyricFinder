@@ -1,12 +1,11 @@
 import { Injectable } from '@angular/core';
 import {Store} from 'rxjs-observable-store';
-import { skip, finalize, take } from 'rxjs/operators';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+import { skip, finalize, take } from 'rxjs/operators';
 import {uiStore} from './ui.service';
 import ENV from './../../../env';
-import { Observable } from 'rxjs';
-import { SearchQuery as SearchQueryInterface } from './../interfaces';
-import { TrackType, TrackState } from './../interfaces';
+import { SearchQuery as SearchQueryInterface, TrackType, TrackState } from './../interfaces';
 
 
 @Injectable({
@@ -39,36 +38,40 @@ export class TracksStore extends Store<TrackState> {
 
   fetchTracks() {
     this.uiState.loading();
-    // tslint:disable-next-line:max-line-length
-    this.http.get(`${ENV.baseAPIURL}/ws/1.1/chart.tracks.get?page=1&page_size=30&country=NA&f_has_lyrics=1&apikey=${ENV.apiKey}`).pipe(
+    this.http
+    .get(`${ENV.baseAPIURL}/ws/1.1/chart.tracks.get?page=1&page_size=30&country=NA&f_has_lyrics=1&apikey=${ENV.apiKey}`)
+    .pipe(
       finalize(() => { this.uiState.notloading(); }),
       take(1)
     ).subscribe(
       json => {
-        // console.log(json['message'].body.track_list);
         this.setState({
           ...this.state,
-          tracklist : this.beatDown(json['message'].body.track_list)
+          tracklist : this.getRequiredProps(json['message'].body.track_list)
         });
       }, (err: HttpErrorResponse) => {
         this.uiState.setError(`Sorry, an error occured: ${err.statusText}`);
       });
   }
 
-  beatDown(data): TrackType[] {
-    const filtered: TrackType[] = [];
-    const deep = JSON.parse(JSON.stringify(data));
-    deep.map(({track}) => {
-      const {
-        track_name, album_name, artist_name, track_id, primary_genres, explicit,
-        first_release_date, album_id, commontrack_id
-      } = track;
-      filtered.push( {
-        track_name, album_name, artist_name, track_id, primary_genres, explicit,
-        first_release_date, album_id, commontrack_id
-      });
+  extractProps(initialObject): TrackType {
+    const {
+      track_name, album_name, artist_name, track_id, primary_genres, explicit,
+      first_release_date, album_id, commontrack_id
+    } = initialObject;
+    return {
+      track_name, album_name, artist_name, track_id, primary_genres, explicit,
+      first_release_date, album_id, commontrack_id
+    };
+  }
+
+  getRequiredProps(data: Array<any>): TrackType[] {
+    const filteredTracks: TrackType[] = [];
+    const deepCopied: Array<any> = JSON.parse(JSON.stringify(data));
+    deepCopied.map(({track}) => {
+      filteredTracks.push(this.extractProps(track));
     });
-    return filtered;
+    return filteredTracks;
   }
 
   getTrackById(trackId: string): TrackType {
@@ -92,7 +95,8 @@ export class TracksStore extends Store<TrackState> {
     this.uiState.loading();
     this.http.get(
       `${ENV.baseAPIURL}/ws/1.1/track.search?q_track=${queryOptions.title}
-      &page_size=${queryOptions.resultSize}&page=1&s_track_rating=desc&apikey=${ENV.apiKey}`).pipe(
+      &page_size=${queryOptions.resultSize}&page=1&s_track_rating=desc&apikey=${ENV.apiKey}`)
+      .pipe(
         finalize(() => {
           this.uiState.notloading();
           this.uiState.setError(undefined);
@@ -100,11 +104,10 @@ export class TracksStore extends Store<TrackState> {
         take(1)
       )
       .subscribe(response => {
-        // console.log(json.message.body);
         const { track_list } = response['message'].body;
         this.setState({
           ...this.state,
-          CurrentSearchTracks : this.beatDown(track_list)
+          CurrentSearchTracks : this.getRequiredProps(track_list)
         });
       }, (err: HttpErrorResponse) => {
         this.uiState.setError(`Sorry, an error occured: ${err.statusText}`);
@@ -118,7 +121,6 @@ export class TracksStore extends Store<TrackState> {
       finalize(() => { this.uiState.notloading(); }),
       take(1)
     ).subscribe(response => {
-      // console.log(response['message'].header.status_code);
       const { status_code } = response['message'].header;
       if (status_code !== 200) {
         const errorMessage = status_code === 404 ? 'The track was not found' : 'Sorry, an error occured';
@@ -128,25 +130,15 @@ export class TracksStore extends Store<TrackState> {
 
       const {track} = response['message'].body;
       if (track) {
-        const {
-          track_name, album_name, artist_name, track_id, primary_genres, explicit,
-          first_release_date, album_id, commontrack_id
-        } = track;
-        const filtered = {
-          track_name, album_name, artist_name, track_id, primary_genres, explicit,
-          first_release_date, album_id, commontrack_id
-        };
+        const filtered = this.extractProps(track);
         if (filtered) {
-          // console.log('filtered');
           const formerCachedTracks = this.state.cachedTracks || [];
-
           this.setState({
             ...this.state,
             cachedTracks: [...formerCachedTracks, filtered]
           });
         }
       }
-      // add current track to state
     }, (err: HttpErrorResponse) => {
       console.error(err);
       this.uiState.setError(`Sorry, an error occured: ${err.statusText}`);
