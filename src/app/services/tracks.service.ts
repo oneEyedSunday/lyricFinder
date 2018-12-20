@@ -56,12 +56,12 @@ export class TracksStore extends Store<TrackState> {
 
   extractProps(initialObject): TrackType {
     const {
-      track_name, album_name, artist_name, track_id, primary_genres, explicit,
-      first_release_date, album_id, commontrack_id
+      track_name, album_name, artist_name,
+      track_id, primary_genres, explicit, album_id, commontrack_id
     } = initialObject;
     return {
-      track_name, album_name, artist_name, track_id, primary_genres, explicit,
-      first_release_date, album_id, commontrack_id
+      track_name, album_name, artist_name, track_id,
+      primary_genres, explicit, album_id, commontrack_id
     };
   }
 
